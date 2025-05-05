@@ -2,9 +2,8 @@ import { useEffect } from "react"
 import flatpickr from "flatpickr"
 import "flatpickr/dist/flatpickr.css"
 import Label from "./Label"
-import { CalenderIcon } from "../../icons"
-var Hook = flatpickr.Options.Hook
-var DateOption = flatpickr.Options.DateOption
+import { CalenderIcon } from "../../admin-icons"
+
 
 export default function DatePicker({
   id,

@@ -9,8 +9,8 @@ import {
   EyeCloseIcon,
   EyeIcon,
   TimeIcon
-} from "../../../icons"
-import DatePicker from "@/components/form/date-picker"
+} from "../../../admin-icons"
+import DatePicker from "@/admin-components/form/date-picker"
 
 export default function DefaultInputs() {
   const [showPassword, setShowPassword] = useState(false)
