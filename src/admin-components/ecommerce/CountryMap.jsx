@@ -1,20 +1,43 @@
-import React from "react"
-// import { VectorMap } from "@react-jvectormap/core";
-import { worldMill } from "@react-jvectormap/world"
-import dynamic from "next/dynamic"
+import React from "react";
+import dynamic from "next/dynamic";
 
+// Use dynamic import with { ssr: false } to properly handle the ES module
 const VectorMap = dynamic(
   () => import("@react-jvectormap/core").then(mod => mod.VectorMap),
   { ssr: false }
-)
+);
+
+// Also dynamically import the world map data to avoid ES module issues
+const WorldMap = dynamic(
+  () => import("@react-jvectormap/world").then(mod => {
+    // Return the worldMill data from the module
+    return Promise.resolve(mod.worldMill);
+  }),
+  { ssr: false }
+);
 
 const CountryMap = ({ mapColor }) => {
+  const [worldData, setWorldData] = React.useState(null);
+
+  React.useEffect(() => {
+    // Only load the map in browser environment
+    import("@react-jvectormap/world")
+      .then((mod) => {
+        setWorldData(mod.worldMill);
+      })
+      .catch(err => console.error("Error loading map data:", err));
+  }, []);
+
+  // Don't render until map data is loaded
+  if (!worldData) {
+    return <div>Loading map...</div>;
+  }
+
   return (
     <VectorMap
-      map={worldMill}
+      map={worldData}
       backgroundColor="transparent"
       markerStyle={{
-        // Type assertion to bypass strict CSS property checks
         initial: {
           fill: "#465FFF",
           r: 4 // Custom radius for markers
@@ -90,7 +113,7 @@ const CountryMap = ({ mapColor }) => {
         selectedHover: {}
       }}
     />
-  )
-}
+  );
+};
 
-export default CountryMap
+export default CountryMap;
