@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { SidebarProvider } from "@/admin-context/SidebarContext";
 import { ThemeProvider } from "@/admin-context/ThemeContext";
-import { Outfit } from 'next/font/google';
+import { Outfit } from "next/font/google";
 import Head from "next/head";
 
 // Initialize the font
