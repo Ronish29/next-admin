@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `user` MODIFY `roleId` MEDIUMINT UNSIGNED NULL;

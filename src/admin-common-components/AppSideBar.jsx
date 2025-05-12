@@ -52,8 +52,8 @@ const navItems = [
 const members = [
   {
     icon: <UserCircleIcon />,
-    name: "Members",
-    path: "/member",
+    name: "Contacts",
+    path: "/contact",
   },
 ];
 

@@ -3,6 +3,7 @@ import { SidebarProvider } from "@/admin-context/SidebarContext";
 import { ThemeProvider } from "@/admin-context/ThemeContext";
 import { Outfit } from "next/font/google";
 import Head from "next/head";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 // Initialize the font
 const outfit = Outfit({
@@ -24,7 +25,9 @@ export default function App({ Component, pageProps }) {
       <ThemeProvider>
         <SidebarProvider>
           <div className={`${outfit.className} dark:bg-gray-900`}>
-            <Component {...pageProps} />
+            <AdminLayout>
+              <Component {...pageProps} />
+            </AdminLayout>
           </div>
         </SidebarProvider>
       </ThemeProvider>

@@ -26,3 +26,25 @@ model contact {
   created_at   DateTime? @default(now())
   // store        store?    @relation(fields: [store_id], references: [store_id])
 }
+
+model user {
+  id           Int     @id @default(autoincrement()) @map("id") @db.UnsignedMediumInt
+  user_name    String  @unique
+  email        String  @unique
+  mobile       String?
+  name         String?
+  isSuperAdmin Boolean @default(false)
+  password     String  @db.VarChar(255)
+  roleId       Int?    @db.UnsignedMediumInt
+  role         role?   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([roleId], map: "user_roleId_fkey")
+}
+
+model role {
+  id           Int    @id @default(autoincrement()) @db.UnsignedMediumInt
+  name         String @unique
+  permissions  Json?
+  redirect_url String
+  users        user[]
+}

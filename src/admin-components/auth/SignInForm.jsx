@@ -1,15 +1,36 @@
-"use client"
-import Checkbox from "@/admin-components/form/input/Checkbox"
-import Input from "@/admin-components/form/input/InputField"
-import Label from "@/admin-components/form/Label"
-import Button from "@/admin-components/ui/button/Button"
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/admin-icons"
-import Link from "next/link"
-import React, { useState } from "react"
+"use client";
+import Checkbox from "@/admin-components/form/input/Checkbox";
+import Input from "@/admin-components/form/input/InputField";
+import Label from "@/admin-components/form/Label";
+import Button from "@/admin-components/ui/button/Button";
+import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/admin-icons";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 export default function SignInForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [isChecked, setIsChecked] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const router = useRouter();
+
+  const logIn = async () => {
+    const res = await axios.post("/api/login", {
+      user_name: userName,
+      password,
+    });
+
+    console.log(res, "res========");
+
+    if (res.status === 200) {
+      router.push("/");
+    }
+  };
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -88,9 +109,16 @@ export default function SignInForm() {
               <div className="space-y-6">
                 <div>
                   <Label>
-                    Email <span className="text-error-500">*</span>{" "}
+                    User Name <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" type="email" />
+                  <Input
+                    type="text"
+                    name="userName"
+                    id="userName"
+                    placeholder="Asnaali"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>
@@ -100,6 +128,10 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      name="password"
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -128,7 +160,7 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
+                  <Button className="w-full" size="sm" onClick={logIn}>
                     Sign in
                   </Button>
                 </div>
@@ -150,5 +182,5 @@ export default function SignInForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }
