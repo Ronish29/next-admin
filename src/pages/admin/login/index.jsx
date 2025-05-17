@@ -18,7 +18,7 @@ export default function SignInPage() {
         {/* Add more meta tags if needed */}
       </Head>
       <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
-        <>
+        <ThemeProvider>
           <div className="relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0">
             <SignInForm />
             <div className="lg:w-1/2 w-full h-full bg-brand-950 dark:bg-white/5 lg:grid items-center hidden">
@@ -44,7 +44,7 @@ export default function SignInPage() {
               <ThemeTogglerTwo />
             </div>
           </div>
-        </>
+        </ThemeProvider>
       </div>
     </>
   );

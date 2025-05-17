@@ -1,31 +1,31 @@
-"use client"
-import React, { useState } from "react"
-import ComponentCard from "../../common/ComponentCard"
-import Label from "../Label"
-import Select from "../Select"
-import MultiSelect from "../MultiSelect"
-import { ChevronDownIcon } from "@/admin-icons"
+"use client";
+import React, { useState } from "react";
+import ComponentCard from "../../common/ComponentCard";
+import Label from "../Label";
+import Select from "../Select";
+import MultiSelect from "../MultiSelect";
+import { ChevronDownIcon } from "@/admin-icons";
 
 export default function SelectInputs() {
   const options = [
     { value: "marketing", label: "Marketing" },
     { value: "template", label: "Template" },
-    { value: "development", label: "Development" }
-  ]
+    { value: "development", label: "Development" },
+  ];
 
-  const [selectedValues, setSelectedValues] = useState([])
+  const [selectedValues, setSelectedValues] = useState([]);
 
-  const handleSelectChange = value => {
-    console.log("Selected value:", value)
-  }
+  const handleSelectChange = (value) => {
+    console.log("Selected value:", value);
+  };
 
   const multiOptions = [
     { value: "1", text: "Option 1", selected: false },
     { value: "2", text: "Option 2", selected: false },
     { value: "3", text: "Option 3", selected: false },
     { value: "4", text: "Option 4", selected: false },
-    { value: "5", text: "Option 5", selected: false }
-  ]
+    { value: "5", text: "Option 5", selected: false },
+  ];
 
   return (
     <ComponentCard title="Select Inputs">
@@ -49,7 +49,7 @@ export default function SelectInputs() {
             label="Multiple Select Options"
             options={multiOptions}
             defaultSelected={["1", "3"]}
-            onChange={values => setSelectedValues(values)}
+            onChange={(values) => setSelectedValues(values)}
           />
           <p className="sr-only">
             Selected Values: {selectedValues.join(", ")}
@@ -57,5 +57,5 @@ export default function SelectInputs() {
         </div>
       </div>
     </ComponentCard>
-  )
+  );
 }

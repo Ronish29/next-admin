@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export function middleware(req) {
   const { pathname } = req.nextUrl;
 
-  const token = req.cookies.get("loginuser");
+  const token = req.cookies.get("authToken");
   console.log(token, "token");
 
   if (!token && pathname.startsWith("/admin") && pathname !== "/admin/login") {
@@ -18,5 +18,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/adm"],
+  matcher: ["/admin/:path*"],
 };

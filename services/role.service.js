@@ -2,38 +2,37 @@ import sendResponse from "@/utils/sendResponse";
 import contactValidator from "../validators/contact";
 import sendErrorResponse from "@/utils/sendErrorResponse";
 import prisma from "@/lib/prisma";
+import { create_role, delete_role, find_role, get_all_role, update_role } from "../repositories/role";
 
 export const createRole = async (req, res, model) => {
-  const data = req.body;
+  const { name, permissions, redirect_url } = req.body;
   console.log(req.body, "re.body======");
 
   try {
-    const { error, value } = contactValidator.validate(data);
 
-    if (error) {
-      console.log(error);
+    if (!name)
+      return sendErrorResponse(
+        res,
+        "role name is required",
+        401
+      );
 
-      return sendErrorResponse(res, error.message, 400);
-    }
-
-    const existing = await prisma[model].findFirst({
+    const existing = await prisma[model].findUnique({
       where: {
-        email: value.email,
+        name,
       },
     });
 
     if (existing)
       return sendErrorResponse(
         res,
-        "User already filled form with thid email id, try using another email",
+        "role exist with this name, try another name",
         401
       );
 
-    const member = await prisma[model].create({
-      data: value,
-    });
+    const role = await create_role({ name, permissions, redirect_url });
 
-    sendResponse(res, member, 201);
+    sendResponse(res, role, 201);
   } catch (err) {
     console.log(err, "error=========");
     return sendErrorResponse(res, err.message, 400);
@@ -51,34 +50,27 @@ export const getAllRole = async (req, res, model) => {
 
     const filter = searchTerm
       ? {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
+        OR: [
+          {
+            firstName: {
+              contains: searchTerm,
+              mode: "insensitive",
             },
-            {
-              lastName: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
+          },
+          {
+            lastName: {
+              contains: searchTerm,
+              mode: "insensitive",
             },
-          ],
-        }
+          },
+        ],
+      }
       : {};
 
-    const data = await prisma[model].findMany({
-      skip: offset,
-      take: limit,
-      where: filter,
-    });
+    const { roles, total } = await get_all_role({ where: filter, skip: offset, take: limit })
 
-    const totalRecords = await prisma[model].count({
-      where: filter,
-    });
 
-    return sendResponse(res, { data, totalRecords }, 200);
+    return sendResponse(res, { roles, total }, 200);
   } catch (err) {
     console.error("Error fetching contacts:", err);
     return sendErrorResponse(res, "Server Error", 500);
@@ -89,11 +81,7 @@ export const getSingleRole = async (req, res, model) => {
   const { id } = req.query;
 
   try {
-    const singleContct = await prisma[model].findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const singleContct = await find_role({ id });
 
     if (!singleContct) {
       sendErrorResponse(res, "Member not found!", 404);
@@ -108,33 +96,31 @@ export const getSingleRole = async (req, res, model) => {
 
 export const updateRole = async (req, res, model) => {
   const { id } = req.query;
-  const data = req.body;
+  const { name, permissions, redirect_url } = req.body;
 
   try {
-    const { error, value } = contactValidator.validate(data);
 
-    if (error) {
-      console.log(error);
-
-      return sendErrorResponse(res, error.message, 400);
-    }
+    if (!name)
+      return sendErrorResponse(
+        res,
+        "role name is required",
+        401
+      );
 
     const existing = await prisma[model].findUnique({
       where: {
-        id: parseInt(id),
+        name,
       },
     });
 
     if (existing)
       return sendErrorResponse(
         res,
-        "User already filled form with thid email id, try using another email",
+        "role exist with this name, try another name",
         401
       );
 
-    const member = await prisma[model].create({
-      data: value,
-    });
+    const member = await update_role({ name, permissions, redirect_url });
 
     sendResponse(res, member, 201);
   } catch (err) {
@@ -147,23 +133,15 @@ export const deleteRole = async (req, res, model) => {
   const { id } = req.query;
 
   try {
-    const singleContct = await prisma[model].findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const singleContct = await find_role({ id });
 
     if (!singleContct) {
       sendErrorResponse(res, "Member not found!", 404);
     }
 
-    await prisma[model].delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const deleted = delete_role({ id });
 
-    sendResponse(res, singleContct, 201);
+    sendResponse(res, deleted, 201);
   } catch (err) {
     console.log(err, "error=========");
     sendErrorResponse(res, err.message, 400);

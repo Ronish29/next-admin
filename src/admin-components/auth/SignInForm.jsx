@@ -8,6 +8,8 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
+import Loader from "../ui/loaders/Loader";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,18 +18,29 @@ export default function SignInForm() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
-  const logIn = async () => {
-    const res = await axios.post("/api/login", {
-      user_name: userName,
-      password,
-    });
+  const logIn = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await axios.post("/api/login", {
+        user_name: userName,
+        password,
+      });
 
-    console.log(res, "res========");
+      console.log(res.status === 200, "res====");
 
-    if (res.status === 200) {
-      router.push("/");
+      if (res.status === 200) {
+        router.push("/admin");
+        // window.open("/admin", "_blank");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,7 +118,7 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <div>
               <div className="space-y-6">
                 <div>
                   <Label>
@@ -115,7 +128,7 @@ export default function SignInForm() {
                     type="text"
                     name="userName"
                     id="userName"
-                    placeholder="Asnaali"
+                    placeholder="Enter your username"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                   />
@@ -152,31 +165,13 @@ export default function SignInForm() {
                       Keep me logged in
                     </span>
                   </div>
-                  <Link
-                    href="/reset-password"
-                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                  >
-                    Forgot password?
-                  </Link>
                 </div>
                 <div>
                   <Button className="w-full" size="sm" onClick={logIn}>
-                    Sign in
+                    {loading ? <Loader /> : "Sign in"}
                   </Button>
                 </div>
               </div>
-            </form>
-
-            <div className="mt-5">
-              <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Don&apos;t have an account? {""}
-                <Link
-                  href="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Sign Up
-                </Link>
-              </p>
             </div>
           </div>
         </div>

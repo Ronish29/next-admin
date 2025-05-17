@@ -25,6 +25,7 @@ const userValidator = Joi.object({
     "string.min": "Password must be greater then 8 character",
     "string.max": "Password must be less then 40 character",
   }),
+  isSuperAdmin: Joi.boolean().optional(),
   roleId: Joi.number(),
 });
 

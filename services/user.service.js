@@ -3,6 +3,7 @@ import sendErrorResponse from "@/utils/sendErrorResponse";
 import prisma from "@/lib/prisma";
 import userValidator from "../validators/user";
 import bcrypt from "bcrypt";
+import { create_user, delete_user, find_user, get_all_user, update_user } from "../repositories/user";
 
 export const createUser = async (req, res, model) => {
   const data = req.body;
@@ -13,7 +14,6 @@ export const createUser = async (req, res, model) => {
 
     if (error) {
       console.log(error);
-
       return sendErrorResponse(res, error.message, 400);
     }
 
@@ -32,9 +32,7 @@ export const createUser = async (req, res, model) => {
 
     const hashedPassword = await bcrypt.hash(value.password, 10);
 
-    const member = await prisma[model].create({
-      data: { ...value, password: hashedPassword },
-    });
+    const member = await create_user({ ...value, password: hashedPassword })
 
     sendResponse(res, member, 201);
   } catch (err) {
@@ -54,34 +52,24 @@ export const getAllUser = async (req, res, model) => {
 
     const filter = searchTerm
       ? {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
+        OR: [
+          {
+            user_name: {
+              contains: searchTerm
             },
-            {
-              lastName: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
+          },
+          {
+            email: {
+              contains: searchTerm
             },
-          ],
-        }
+          },
+        ],
+      }
       : {};
 
-    const data = await prisma[model].findMany({
-      skip: offset,
-      take: limit,
-      where: filter,
-    });
+    const { users, total } = await get_all_user({ where: filter, skip: offset, take: limit })
 
-    const totalRecords = await prisma[model].count({
-      where: filter,
-    });
-
-    return sendResponse(res, { data, totalRecords }, 200);
+    return sendResponse(res, { users, total }, 200);
   } catch (err) {
     console.error("Error fetching contacts:", err);
     return sendErrorResponse(res, "Server Error", 500);
@@ -92,17 +80,13 @@ export const getSingleUser = async (req, res, model) => {
   const { id } = req.query;
 
   try {
-    const singleContct = await prisma[model].findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const singleContct = find_user({ id });
 
     if (!singleContct) {
       sendErrorResponse(res, "Member not found!", 404);
     }
 
-    sendResponse(res, singleContct, 201);
+    sendResponse(res, singleContct, 200);
   } catch (err) {
     console.log(err, "error=========");
     sendErrorResponse(res, err.message, 400);
@@ -135,11 +119,9 @@ export const updateUser = async (req, res, model) => {
         401
       );
 
-    const member = await prisma[model].create({
-      data: value,
-    });
+    const member = await update_user({ ...value, password: hashedPassword, id })
 
-    sendResponse(res, member, 201);
+    sendResponse(res, member, 200);
   } catch (err) {
     console.log(err, "error=========");
     return sendErrorResponse(res, err.message, 400);
@@ -150,23 +132,15 @@ export const deleteUser = async (req, res, model) => {
   const { id } = req.query;
 
   try {
-    const singleContct = await prisma[model].findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const singleContct = await find_user({ id })
 
     if (!singleContct) {
       sendErrorResponse(res, "Member not found!", 404);
     }
 
-    await prisma[model].delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const deleted = delete_user({ id });
 
-    sendResponse(res, singleContct, 201);
+    sendResponse(res, deleted, 200);
   } catch (err) {
     console.log(err, "error=========");
     sendErrorResponse(res, err.message, 400);

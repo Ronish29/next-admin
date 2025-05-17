@@ -1,23 +1,23 @@
-"use client"
-import React, { useState } from "react"
+"use client";
+import React, { useState } from "react";
 
 const Switch = ({
   label,
   defaultChecked = false,
   disabled = false,
   onChange,
-  color = "blue" // Default to blue color
+  color = "blue", // Default to blue color
 }) => {
-  const [isChecked, setIsChecked] = useState(defaultChecked)
+  const [isChecked, setIsChecked] = useState(defaultChecked);
 
   const handleToggle = () => {
-    if (disabled) return
-    const newCheckedState = !isChecked
-    setIsChecked(newCheckedState)
+    if (disabled) return;
+    const newCheckedState = !isChecked;
+    setIsChecked(newCheckedState);
     if (onChange) {
-      onChange(newCheckedState)
+      onChange(newCheckedState);
     }
-  }
+  };
 
   const switchColors =
     color === "blue"
@@ -27,7 +27,7 @@ const Switch = ({
             : "bg-gray-200 dark:bg-white/10", // Blue version
           knob: isChecked
             ? "translate-x-full bg-white"
-            : "translate-x-0 bg-white"
+            : "translate-x-0 bg-white",
         }
       : {
           background: isChecked
@@ -35,8 +35,8 @@ const Switch = ({
             : "bg-gray-200 dark:bg-white/10", // Gray version
           knob: isChecked
             ? "translate-x-full bg-white"
-            : "translate-x-0 bg-white"
-        }
+            : "translate-x-0 bg-white",
+        };
 
   return (
     <label
@@ -60,7 +60,7 @@ const Switch = ({
       </div>
       {label}
     </label>
-  )
-}
+  );
+};
 
-export default Switch
+export default Switch;
